@@ -1,0 +1,16 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+#root {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+.App {
+  min-width: 1080px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+}
