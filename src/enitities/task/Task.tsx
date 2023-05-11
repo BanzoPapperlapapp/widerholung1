@@ -10,19 +10,20 @@ type TaskPropsType = {
     id: string
     title: string
     Done: boolean
-    onClick: (taskId: string, status: boolean) => void
+    changeTaskStatus: (taskId: string, status: boolean) => void
+    delTask: (taskId: string) => void
 }
-export const Task = ({id, title, Done, onClick} : TaskPropsType) => {
+export const Task = ({id, title, Done, changeTaskStatus, delTask} : TaskPropsType) => {
     return (
         <ListItem
             secondaryAction={
-                <IconButton edge="end" aria-label="comments">
+                <IconButton edge="end" aria-label="comments" onClick={() => delTask(id)}>
                     <DeleteIcon />
                 </IconButton>
             }
             disablePadding
         >
-            <ListItemButton role={undefined}  dense onClick={() => onClick(id, !Done)}>
+            <ListItemButton role={undefined}  dense onClick={() => changeTaskStatus(id, !Done)}>
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
