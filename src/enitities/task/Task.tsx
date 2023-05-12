@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -13,7 +13,8 @@ type TaskPropsType = {
     changeTaskStatus: (taskId: string, status: boolean) => void
     delTask: (taskId: string) => void
 }
-export const Task = ({id, title, Done, changeTaskStatus, delTask} : TaskPropsType) => {
+export const Task = memo(({id, title, Done, changeTaskStatus, delTask} : TaskPropsType) => {
+    console.log('Task rerender ' + title)
     return (
         <ListItem
             secondaryAction={
@@ -36,4 +37,5 @@ export const Task = ({id, title, Done, changeTaskStatus, delTask} : TaskPropsTyp
             </ListItemButton>
         </ListItem>
     );
-};
+}
+)

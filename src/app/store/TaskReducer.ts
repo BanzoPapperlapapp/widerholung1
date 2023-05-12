@@ -1,5 +1,5 @@
 import {v1} from "uuid";
-import {addTodoReducerAC} from "./TodoReducer";
+import {addTodoReducerAC, delTodoAC} from "./TodoReducer";
 
 const initialTaskReducerState: TasksReducerStateType = {
     'id1': [{id: '1', Done: false, title: 'Task 1'}, {id: '2', Done: false, title: 'Task 2'}, {
@@ -37,6 +37,10 @@ export const TaskReducer = (state = initialTaskReducerState, action: UnionAction
                 [action.payload.todoId] : []
             }
         }
+        case "DEL-TODO": {
+            delete state[action.payload.todoId]
+            return {...state}
+        }
         default:
             return state;
     }
@@ -56,7 +60,7 @@ export const addTask = (todoId: string, title: string) => {
     return {type: 'ADD-TASK', payload: {todoId, title}} as const
 }
 
-type TaskType = {
+export type TaskType = {
     id: string
     title: string
     Done: boolean
@@ -70,3 +74,4 @@ export type UnionActionType =
     | ReturnType<typeof delTask>
     | ReturnType<typeof addTask>
     | ReturnType<typeof addTodoReducerAC>
+    | ReturnType<typeof delTodoAC>

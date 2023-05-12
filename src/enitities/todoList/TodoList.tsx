@@ -1,14 +1,24 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Box from '@mui/material/Box';
 import st from './TodoList.module.css';
 import {Todo} from "../todo/Todo";
 import {useDispatch, useSelector} from "react-redux";
-import {addTodoReducerAC, TodoReducerState} from "../../app/store/TodoReducer";
-import {RootReducerType} from "../../app/store/Store";
+import {addTodoReducerAC, TodoType} from "../../app/store/TodoReducer";
+import {RootReducerType, useAppSelector} from "../../app/store/Store";
 import {AddItem} from "../../shared/addItem/addItem";
+import {TasksReducerStateType} from "../../app/store/TaskReducer";
+import {todoApi} from "../../api/TodoListApi";
 
 export const TodoList = () => {
-    const todos = useSelector<RootReducerType, TodoReducerState[]>(state => state.todos)
+    console.log('TodoList Rerender')
+    useEffect(()=>{
+        todoApi.getTodos().then(res => {
+            console.log(res.data)
+        })
+    },[])
+
+    const todos = useAppSelector<TodoType[]>(state => state.todos)
+    const tasks = useSelector<RootReducerType, TasksReducerStateType>(state => state.tasks)
     const dispatch = useDispatch()
 
     const onEnterAddTodoHandler = (title: string) => dispatch(addTodoReducerAC(title))
@@ -21,7 +31,7 @@ export const TodoList = () => {
             </div>
 
             <Box className={st.items_box}>
-                {todos.map((t, i) => <Todo key={i} todoId={t.id} todoTitle={t.title}/>)}
+                {todos.map((t, i) => <Todo key={i} todoId={t.id} todoTitle={t.title} filter={t.filter} tasks={tasks[t.id]}/>)}
             </Box>
         </div>
     );
