@@ -8,7 +8,9 @@ function App() {
     const dispatch = useAppDispatch()
     useEffect(()=>{
         dispatch(setTodoTC())
+
     },[])
+
   return (
     <div className="App">
       <TodoList/>

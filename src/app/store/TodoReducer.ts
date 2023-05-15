@@ -1,6 +1,7 @@
-import {v1} from "uuid";
 import {todoApi, TodoListApiType} from "../../api/TodoListApi";
 import {AppThunk} from "./Store";
+import {Dispatch} from "redux";
+import {setTasksTC} from "./TaskReducer";
 
 const initialStateTodoReducer: TodoType[] = []
 export const TodoReducer = (state = initialStateTodoReducer, action:UnionTodoReducerType) => {
@@ -9,7 +10,7 @@ export const TodoReducer = (state = initialStateTodoReducer, action:UnionTodoRed
             return [...state,...action.payload.todos];
         }
         case "ADD-TODO": {
-            return [...state,{id: action.payload.todoId, title: action.payload.title,addedDate: '', order: 0, filter: 'all'}]
+            return [...state,{...action.payload.todo}]
         }
         case "CHANGE-FILTER": {
             return state.map(t => t.id === action.payload.todoId ? {...t, filter: action.payload.filter} : t)
@@ -24,9 +25,8 @@ export const TodoReducer = (state = initialStateTodoReducer, action:UnionTodoRed
 const setTodosAC = (todos: TodoListApiType[]) => {
     return {type: 'SET-TODO',payload: {todos}} as const
 }
-export const addTodoReducerAC = (title: string) => {
-    const todoId = v1()
-    return {type: 'ADD-TODO', payload: {title, todoId}} as const
+export const addTodoReducerAC = (todo: TodoType) => {
+    return {type: 'ADD-TODO', payload: {todo}} as const
 }
 export const changeTodoFilterAC = (todoId: string, filter: TodoFilterType) => {
     return {type: 'CHANGE-FILTER', payload: {todoId, filter}} as const
@@ -39,10 +39,23 @@ export const delTodoAC = (todoId: string) => {
 export const setTodoTC = (): AppThunk => {
     return async (dispatch) => {
             const todos = await todoApi.getTodos()
+            todos.data.forEach(el => dispatch(setTasksTC(el.id)))
             dispatch(setTodosAC(todos.data))
     }
 }
-
+export const addTodoTC = (title: string) => {
+    return async (dispatch: Dispatch) => {
+        const res = await todoApi.addTodo(title)
+        const todo:TodoType= {...res.data.data.item,filter: 'all'}
+        dispatch(addTodoReducerAC(todo))
+    }
+}
+export const delTodoTC = (todoId: string): AppThunk => {
+    return async (dispatch) => {
+        const res = await todoApi.delTodo(todoId)
+        dispatch(delTodoAC(todoId))
+    }
+}
 /*******TYPES*******/
 export type TodoType = TodoListApiType & {
     filter: TodoFilterType
