@@ -33,6 +33,18 @@ export type GetTasksResponseType = {
     totalCount: number
     error: string | null
 }
+export type UpdateTaskApiType = {
+    title: string
+    description: string
+    completed: boolean
+    status: number
+    priority: number
+    startDate: string
+    deadline: string
+}
+export type UpdateTaskResponseType = {
+    item: UpdateTaskApiType
+}
 export type TasksApiType = {
     description: string
     title: string
@@ -62,8 +74,11 @@ export const todoApi = {
     addTask(todoId: string, title: string) {
         return instance.post<TodoApiResponseType<AddTaskType>>(`todo-lists/${todoId}/tasks`, {title})
     },
-    delTasks(todoId: string, taskId: string) {
+    delTask(todoId: string, taskId: string) {
         return instance.delete<TodoApiResponseType>(`todo-lists/${todoId}/tasks/${taskId}`)
+    },
+    updateTask(todoId: string,taskId: string, task: UpdateTaskApiType) {
+        return instance.put<TodoApiResponseType<UpdateTaskResponseType>>(`todo-lists/${todoId}/tasks/${taskId}`,{task})
     }
 }
 
