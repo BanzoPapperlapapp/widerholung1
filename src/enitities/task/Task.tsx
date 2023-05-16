@@ -9,12 +9,11 @@ import Checkbox from '@mui/material/Checkbox';
 type TaskPropsType = {
     id: string
     title: string
-    Done: boolean
+    completed: boolean
     changeTaskStatus: (taskId: string, status: boolean) => void
     delTask: (taskId: string) => void
 }
-export const Task = memo(({id, title, Done, changeTaskStatus, delTask} : TaskPropsType) => {
-    console.log('Task rerender ' + title)
+export const Task = memo(({id, title, completed, changeTaskStatus, delTask} : TaskPropsType) => {
     return (
         <ListItem
             secondaryAction={
@@ -24,11 +23,11 @@ export const Task = memo(({id, title, Done, changeTaskStatus, delTask} : TaskPro
             }
             disablePadding
         >
-            <ListItemButton role={undefined}  dense onClick={() => changeTaskStatus(id, !Done)}>
+            <ListItemButton role={undefined}  dense onClick={() => changeTaskStatus(id, !completed)}>
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
-                        checked={Done}
+                        checked={completed}
                         tabIndex={-1}
                         disableRipple
                     />

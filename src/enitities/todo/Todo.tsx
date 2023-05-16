@@ -1,4 +1,4 @@
-import React, {memo, useCallback, useEffect, useMemo} from 'react';
+import React, {memo, useCallback, useMemo} from 'react';
 import Paper from '@mui/material/Paper';
 import List from '@mui/material/List';
 import Button from '@mui/material/Button';
@@ -8,11 +8,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import st from "./Todo.module.css";
 import {Task} from "../task/Task";
 
-import {addTask, addTasksTC, delTask, delTaskTC, setTaskStatus, setTasksTC} from "../../app/store/TaskReducer";
+import {addTaskTC, changeTaskStatusTC, delTaskTC,} from "../../app/store/TaskReducer";
+
 import {AddItem} from "../../shared/addItem/addItem";
 import {changeTodoFilterAC, delTodoTC, TodoFilterType} from "../../app/store/TodoReducer";
 import {useAppDispatch} from "../../app/store/Store";
-import {TasksApiType} from "../../api/TodoListApi";
+import {TaskApiStatuses, TasksApiType} from "../../api/TodoListApi";
 
 
 type TodoPropsType = {
@@ -22,23 +23,22 @@ type TodoPropsType = {
     tasks: TasksApiType[]
 }
 export const Todo = memo(({todoId, todoTitle, filter, tasks}: TodoPropsType) => {
-        console.log('Render Todo ' + todoTitle)
 
         const dispatch = useAppDispatch()
 
-        const onClickChangeTaskStatusHandler = useCallback((taskId: string, status: boolean) => dispatch(setTaskStatus(todoId, taskId, status)), [todoId])
+        const onClickChangeTaskStatusHandler = useCallback((taskId: string, status: boolean) => dispatch(changeTaskStatusTC(todoId, taskId, status ? TaskApiStatuses.Completed : TaskApiStatuses.Now)), [todoId])
         const onClickDelTaskHandler = useCallback((taskId: string) => dispatch(delTaskTC(todoId, taskId)), [todoId])
-        const onEnterAddTaskHandler = useCallback((title: string) => dispatch(addTasksTC(todoId,title)), [todoId])
+        const onEnterAddTaskHandler = useCallback((title: string) => dispatch(addTaskTC(todoId,title)), [todoId])
         const onClickChangeFilterHandler = useCallback((filter: TodoFilterType) => dispatch(changeTodoFilterAC(todoId, filter)), [todoId])
         const onClickDeleteTodo = () => dispatch(delTodoTC(todoId))
 
         const filteredTasks = useMemo(() => {
             switch (filter) {
                 case "active": {
-                    return tasks.filter(t => !t.completed)
+                    return tasks.filter(t => !t.status)
                 }
                 case "completed": {
-                    return tasks.filter(t => t.completed)
+                    return tasks.filter(t => t.status)
                 }
                 default:
                     return tasks
@@ -61,7 +61,7 @@ export const Todo = memo(({todoId, todoTitle, filter, tasks}: TodoPropsType) => 
                         key={t.id}
                         id={t.id}
                         title={t.title}
-                        Done={t.completed}
+                        completed={!!t.status}
                         changeTaskStatus={(taskId, status) => onClickChangeTaskStatusHandler(taskId, status)}
                         delTask={(taskId) => onClickDelTaskHandler(taskId)}
                     />)}

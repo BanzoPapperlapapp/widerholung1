@@ -10,12 +10,6 @@ import {TasksReducerStateType} from "../../app/store/TaskReducer";
 import {todoApi} from "../../api/TodoListApi";
 
 export const TodoList = () => {
-    console.log('TodoList Rerender')
-    useEffect(()=>{
-        todoApi.getTodos().then(res => {
-            console.log(res.data)
-        })
-    },[])
 
     const todos = useAppSelector<TodoType[]>(state => state.todos)
     const tasks = useSelector<RootReducerType, TasksReducerStateType>(state => state.tasks)

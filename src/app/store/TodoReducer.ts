@@ -38,9 +38,14 @@ export const delTodoAC = (todoId: string) => {
 /*******TC*******/
 export const setTodoTC = (): AppThunk => {
     return async (dispatch) => {
+        try{
             const todos = await todoApi.getTodos()
             todos.data.forEach(el => dispatch(setTasksTC(el.id)))
             dispatch(setTodosAC(todos.data))
+        } catch (e){
+            console.log(e)
+        }
+
     }
 }
 export const addTodoTC = (title: string) => {

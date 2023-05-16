@@ -11,6 +11,13 @@ const instance = axios.create({
     ...settings
 })
 
+export type ApiResponseType<D = {}> = {
+    data: D
+    resultCode: number
+    messages: string[]
+}
+
+/************TODOTYPE****************/
 export type TodoListApiType = {
     id: string
     addedDate: string
@@ -20,13 +27,27 @@ export type TodoListApiType = {
 export type AddTodoType = {
     item: TodoListApiType
 }
+
+/*************TASKTYPE***************/
+export type TasksApiType = {
+    description: string
+    title: string
+    status: TaskApiStatuses
+    priority: number
+    startDate: string
+    deadline: string
+    id: string
+    todoListId: string
+    order: number
+    addedDate: string
+}
+export enum TaskApiStatuses {
+    Now,
+    Active,
+    Completed
+}
 export type AddTaskType = {
     item: TasksApiType
-}
-export type TodoApiResponseType<D = {}> = {
-    data: D
-    resultCode: number
-    messages: string[]
 }
 export type GetTasksResponseType = {
     items: TasksApiType[]
@@ -36,8 +57,7 @@ export type GetTasksResponseType = {
 export type UpdateTaskApiType = {
     title: string
     description: string
-    completed: boolean
-    status: number
+    status: TaskApiStatuses
     priority: number
     startDate: string
     deadline: string
@@ -45,40 +65,30 @@ export type UpdateTaskApiType = {
 export type UpdateTaskResponseType = {
     item: UpdateTaskApiType
 }
-export type TasksApiType = {
-    description: string
-    title: string
-    completed: boolean
-    status: number
-    priority: number
-    startDate: string
-    deadline: string
-    id: string
-    todoListId: string
-    order: number
-    addedDate: string
-}
+
+
+
 export const todoApi = {
     getTodos() {
         return instance.get<TodoListApiType[]>('todo-lists')
     },
     addTodo(title: string) {
-        return instance.post<TodoApiResponseType<AddTodoType>>('todo-lists', {title})
+        return instance.post<ApiResponseType<AddTodoType>>('todo-lists', {title})
     },
     delTodo(todoId: string) {
-        return instance.delete<TodoApiResponseType>(`todo-lists/${todoId}`)
+        return instance.delete<ApiResponseType>(`todo-lists/${todoId}`)
     },
     getTasks(todoId: string) {
         return instance.get<GetTasksResponseType>(`todo-lists/${todoId}/tasks`)
     },
     addTask(todoId: string, title: string) {
-        return instance.post<TodoApiResponseType<AddTaskType>>(`todo-lists/${todoId}/tasks`, {title})
+        return instance.post<ApiResponseType<AddTaskType>>(`todo-lists/${todoId}/tasks`, {title})
     },
     delTask(todoId: string, taskId: string) {
-        return instance.delete<TodoApiResponseType>(`todo-lists/${todoId}/tasks/${taskId}`)
+        return instance.delete<ApiResponseType>(`todo-lists/${todoId}/tasks/${taskId}`)
     },
     updateTask(todoId: string,taskId: string, task: UpdateTaskApiType) {
-        return instance.put<TodoApiResponseType<UpdateTaskResponseType>>(`todo-lists/${todoId}/tasks/${taskId}`,{task})
+        return instance.put<ApiResponseType<UpdateTaskResponseType>>(`todo-lists/${todoId}/tasks/${taskId}`,{...task})
     }
 }
 
