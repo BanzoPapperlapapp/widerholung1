@@ -1,6 +1,7 @@
 import {addTodoReducerAC, delTodoAC} from "./TodoReducer";
 import {AppThunk, RootStateType} from "./Store";
 import {TaskApiStatuses, TasksApiType, todoApi, UpdateTaskApiType} from "../../api/TodoListApi";
+import {setAppStatusAC} from "./AppReducer";
 
 const initialTaskReducerState: TasksReducerStateType = {}
 
@@ -48,10 +49,13 @@ export const TaskReducer = (state = initialTaskReducerState, action: UnionAction
 /********************TC********************/
 export const setTasksTC = (todoId: string): AppThunk => {
     return async (dispatch) => {
-        const tasks = await todoApi.getTasks(todoId)
+        try {
+            const tasks = await todoApi.getTasks(todoId)
+            dispatch(setTasksAC(todoId, tasks.data.items))
+        }catch (e){
+            console.log(e)
+        }
 
-        console.log(todoId, tasks.data.items)
-        dispatch(setTasksAC(todoId, tasks.data.items))
     }
 }
 export const addTaskTC = (todoId: string, title: string): AppThunk => {

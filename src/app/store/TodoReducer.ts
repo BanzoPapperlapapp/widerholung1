@@ -2,6 +2,7 @@ import {todoApi, TodoListApiType} from "../../api/TodoListApi";
 import {AppThunk} from "./Store";
 import {Dispatch} from "redux";
 import {setTasksTC} from "./TaskReducer";
+import {setAppStatusAC} from "./AppReducer";
 
 const initialStateTodoReducer: TodoType[] = []
 export const TodoReducer = (state = initialStateTodoReducer, action:UnionTodoReducerType) => {
@@ -39,11 +40,14 @@ export const delTodoAC = (todoId: string) => {
 export const setTodoTC = (): AppThunk => {
     return async (dispatch) => {
         try{
+            dispatch(setAppStatusAC('pending'))
             const todos = await todoApi.getTodos()
             todos.data.forEach(el => dispatch(setTasksTC(el.id)))
             dispatch(setTodosAC(todos.data))
         } catch (e){
             console.log(e)
+        } finally {
+            dispatch(setAppStatusAC('idle'))
         }
 
     }
